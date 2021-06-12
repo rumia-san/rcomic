@@ -1,0 +1,3 @@
+# VS2019 CMake project and the binary
+.vs/**
+out/**
