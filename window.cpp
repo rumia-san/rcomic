@@ -11,7 +11,6 @@ Window::Window()
 		using namespace std::string_literals;
 		throw std::runtime_error("Failed to create window"s + SDL_GetError());
 	}
-		
 }
 
 Window::~Window()

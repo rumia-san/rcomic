@@ -11,7 +11,6 @@ Image::Image(const char* imagePath)
 		using namespace std::string_literals;
 		throw std::runtime_error("Failed to load image: "s + SDL_GetError());
 	}
-		
 }
 
 Image::~Image()

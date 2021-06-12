@@ -7,20 +7,6 @@ class RComic
 public:
 	RComic() {}
 	~RComic() {}
-	void handleKeyboardInput()
-	{
-		const Uint8* state = SDL_GetKeyboardState(NULL);
-		if (state[SDL_SCANCODE_LEFT])
-			mImage.moveX(-5);
-		if (state[SDL_SCANCODE_RIGHT])
-			mImage.moveX(5);
-		if (state[SDL_SCANCODE_UP])
-			mImage.moveY(-5);
-		if (state[SDL_SCANCODE_DOWN])
-			mImage.moveY(5);
-		if (state[SDL_SCANCODE_ESCAPE])
-			mQuit = true;
-	}
 	void eventLoop()
 	{
 		while (!mQuit)
@@ -30,12 +16,16 @@ public:
 			{
 				switch (event.type)
 				{
+				case SDL_MOUSEBUTTONDOWN:
+					handleMouseEvent(event.button);
+					break;
 				case SDL_QUIT:
 					mQuit = true;
 					break;
 				}
 			}
 			handleKeyboardInput();
+			autoScroll();
 			mWindow.drawImage(mImage);
 			mWindow.update();
 			SDL_Delay(1000/60);
@@ -49,9 +39,41 @@ public:
 	}
 
 private:
-	bool mQuit = false;
 	Window mWindow;
 	Image mImage{ "D:\\developer\\rcomic\\test.bmp" };
+	bool mQuit = false;
+	bool mAutoScroll = false;
+	unsigned int speed = 1;
+	void handleMouseEvent(SDL_MouseButtonEvent& b)
+	{
+		switch (b.button)
+		{
+		case SDL_BUTTON_LEFT:
+			mAutoScroll = !mAutoScroll;
+			break;
+		}
+	}
+	void handleKeyboardInput()
+	{
+		const Uint8* state = SDL_GetKeyboardState(NULL);
+		if (state[SDL_SCANCODE_LEFT])
+			mImage.moveX(-speed);
+		if (state[SDL_SCANCODE_RIGHT])
+			mImage.moveX(speed);
+		if (state[SDL_SCANCODE_UP])
+			mImage.moveY(-speed);
+		if (state[SDL_SCANCODE_DOWN])
+			mImage.moveY(speed);
+		if (state[SDL_SCANCODE_ESCAPE])
+			mQuit = true;
+	}
+	void autoScroll()
+	{
+		if (mAutoScroll)
+		{
+			mImage.moveX(speed);
+		}
+	}
 };
 
 int main(int argc, char* argv[])
