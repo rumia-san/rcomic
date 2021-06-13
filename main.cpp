@@ -1,12 +1,19 @@
 ﻿#include "window.h"
 #include "image.h"
 #include "SDL.h"
-
+#include <stdexcept>
+#include <string>
 class RComic
 {
 public:
-	RComic() {}
-	~RComic() {}
+	RComic()
+	{
+		if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+			using namespace std::string_literals;
+			throw std::runtime_error("Unable to initialize SDL: %s"s + SDL_GetError());
+		};
+	}
+	~RComic() { SDL_Quit(); }
 	void eventLoop()
 	{
 		while (!mQuit)
@@ -16,8 +23,11 @@ public:
 			{
 				switch (event.type)
 				{
+				case SDL_MOUSEWHEEL:
+					handleMouseWheelEvent(event.wheel);
+					break;
 				case SDL_MOUSEBUTTONDOWN:
-					handleMouseEvent(event.button);
+					handleMouseButtonEvent(event.button);
 					break;
 				case SDL_QUIT:
 					mQuit = true;
@@ -43,10 +53,14 @@ private:
 	Image mImage{ "D:\\developer\\rcomic\\test.bmp" };
 	bool mQuit = false;
 	bool mAutoScroll = false;
-	unsigned int speed = 1;
-	void handleMouseEvent(SDL_MouseButtonEvent& b)
+	int speed = 1;
+	void handleMouseWheelEvent(SDL_MouseWheelEvent& e)
 	{
-		switch (b.button)
+		mImage.moveX(e.y * speed);
+	}
+	void handleMouseButtonEvent(SDL_MouseButtonEvent& e)
+	{
+		switch (e.button)
 		{
 		case SDL_BUTTON_LEFT:
 			mAutoScroll = !mAutoScroll;
@@ -78,11 +92,6 @@ private:
 
 int main(int argc, char* argv[])
 {
-	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-		SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
-		return 1;
-	};
-	int exitCode = 0;
 	try
 	{
 		RComic rComic;
@@ -91,8 +100,7 @@ int main(int argc, char* argv[])
 	catch (const std::exception& e)
 	{
 		SDL_Log(e.what());
-		exitCode = 1;
+		return 1;
 	}
-	SDL_Quit();
-	return exitCode;
+	return 0;
 }
