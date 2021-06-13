@@ -1,6 +1,7 @@
 #include "window.h"
 #include "SDL.h"
 #include "image.h"
+#include "imageList.h"
 #include <stdexcept>
 #include <string>
 Window::Window()
@@ -24,7 +25,12 @@ void Window::update()
 	SDL_UpdateWindowSurface(mWindow);
 }
 
-int Window::drawImage(Image& image)
+void Window::drawImage(Image& image)
 {
-	return image.blitTo(SDL_GetWindowSurface(mWindow));
+	image.blitTo(SDL_GetWindowSurface(mWindow));
+}
+
+void Window::drawImage(ImageList& imageList)
+{
+	imageList.blitTo(SDL_GetWindowSurface(mWindow));
 }
