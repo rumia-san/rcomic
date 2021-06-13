@@ -20,8 +20,8 @@ void ImageList::addImage(const char* imagePath)
 		auto [lastX, lastY] = mList.back().getPosition();
 		mList.emplace_back(imagePath);
 		Image& newImage = mList.back();
-		
 		auto [thisW, thisH] = newImage.getSize();
+		// move to the left side of last image
 		newImage.moveTo(lastX - thisW, 0);
 	}
 }

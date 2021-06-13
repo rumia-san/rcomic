@@ -1,5 +1,6 @@
 #include "image.h"
 #include "SDL.h"
+#include "SDL_image.h"
 #include <memory>
 #include <stdexcept>
 #include <string>
@@ -9,7 +10,7 @@ using namespace std::string_literals;
 Image::Image(const char* imagePath)
 {
 	mPosition = std::make_unique<SDL_Rect>();
-	mImageSurface = SDL_LoadBMP(imagePath);
+	mImageSurface = IMG_Load(imagePath);
 	if (!mImageSurface)
 		throw std::runtime_error("Failed to load image: "s + SDL_GetError());
 }

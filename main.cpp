@@ -14,7 +14,7 @@ public:
 			throw std::runtime_error("Unable to initialize SDL: %s"s + SDL_GetError());
 		};
 		mImage.addImage("D:\\developer\\rcomic\\test.bmp");
-		mImage.addImage("D:\\developer\\rcomic\\test.bmp");
+		mImage.addImage("D:\\developer\\rcomic\\test.png");
 	}
 	~RComic() { SDL_Quit(); }
 	void eventLoop()
@@ -53,7 +53,6 @@ public:
 
 private:
 	Window mWindow;
-	//Image mImage{ "D:\\developer\\rcomic\\test.bmp" };
 	ImageList mImage;
 	bool mQuit = false;
 	bool mAutoScroll = false;
