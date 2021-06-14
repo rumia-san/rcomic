@@ -1,10 +1,12 @@
 #include "image.h"
 #include <list>
 
+struct SDL_PixelFormat;
+
 class ImageList
 {
 public:
-	ImageList();
+	ImageList(const SDL_PixelFormat* fmt);
 	~ImageList();
 	void addImage(const char* imagePath);
 	void blitTo(SDL_Surface* surface);
@@ -13,5 +15,6 @@ public:
 
 private:
 	std::list<Image> mList;
+	const SDL_PixelFormat* pixelFormat;
 };
 

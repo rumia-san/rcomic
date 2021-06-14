@@ -16,8 +16,7 @@ Window::Window()
 
 Window::~Window()
 {
-	if (mWindow)
-		SDL_DestroyWindow(mWindow);
+	SDL_DestroyWindow(mWindow);
 }
 
 void Window::update()
@@ -33,4 +32,9 @@ void Window::drawImage(Image& image)
 void Window::drawImage(ImageList& imageList)
 {
 	imageList.blitTo(SDL_GetWindowSurface(mWindow));
+}
+
+const SDL_PixelFormat* Window::getWindowPixelFormat()
+{
+	return SDL_GetWindowSurface(mWindow)->format;
 }

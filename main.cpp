@@ -53,7 +53,7 @@ public:
 
 private:
 	Window mWindow;
-	ImageList mImage;
+	ImageList mImage { mWindow.getWindowPixelFormat() };
 	bool mQuit = false;
 	bool mAutoScroll = false;
 	int speed = 1;

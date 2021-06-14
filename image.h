@@ -4,13 +4,15 @@
 
 struct SDL_Surface;
 struct SDL_Rect;
+struct SDL_PixelFormat;
 
 class Image
 {
 public:
-	explicit Image(const char *imagePath);
+	explicit Image(const char *imagePath, const SDL_PixelFormat* fmt = nullptr);
 	~Image();
 	void blitTo(SDL_Surface* surface) const;
+	void convertFormat(const SDL_PixelFormat* fmt);
 	void moveTo(int x, int y);
 	void moveX(int distance);
 	void moveY(int distance);

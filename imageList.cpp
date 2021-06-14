@@ -1,8 +1,9 @@
 #include "imageList.h"
 #include "SDL.h"
 
-ImageList::ImageList()
+ImageList::ImageList(const SDL_PixelFormat* fmt)
 {
+	pixelFormat = fmt;
 }
 
 ImageList::~ImageList()
@@ -13,7 +14,7 @@ void ImageList::addImage(const char* imagePath)
 {
 	if (mList.empty())
 	{
-		mList.emplace_back(imagePath);
+		mList.emplace_back(imagePath, pixelFormat);
 	}
 	else
 	{
