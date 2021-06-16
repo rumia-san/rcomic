@@ -13,8 +13,6 @@ public:
 			using namespace std::string_literals;
 			throw std::runtime_error("Unable to initialize SDL: %s"s + SDL_GetError());
 		};
-		mImage.addImage("D:\\developer\\rcomic\\test.bmp");
-		mImage.addImage("D:\\developer\\rcomic\\test.png");
 	}
 	~RComic() { SDL_Quit(); }
 	void eventLoop()
@@ -26,6 +24,12 @@ public:
 			{
 				switch (event.type)
 				{
+				case SDL_DROPFILE: {
+					char* droppedFile = event.drop.file;
+					mImage.addImage(droppedFile);
+					SDL_free(droppedFile);
+					break;
+				}
 				case SDL_MOUSEWHEEL:
 					handleMouseWheelEvent(event.wheel);
 					break;
@@ -41,7 +45,10 @@ public:
 			autoScroll();
 			mWindow.drawImage(mImage);
 			mWindow.update();
-			SDL_Delay(1000/60);
+			/* Set the frame rate to 30 fps to avoid screen tearing...
+			*  Currently we use this poor man's workaround :(
+			*/
+			SDL_Delay(1000/30);
 		}
 	}
 	void run()

@@ -7,7 +7,8 @@
 Window::Window()
 {
 	mWindow = SDL_CreateWindow("SDL2 Displaying Image",
-		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 640, 480, 0);
+		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 640, 480,
+		SDL_WINDOW_RESIZABLE);
 	if (!mWindow) {
 		using namespace std::string_literals;
 		throw std::runtime_error("Failed to create window"s + SDL_GetError());

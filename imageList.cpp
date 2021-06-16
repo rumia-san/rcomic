@@ -1,5 +1,7 @@
 #include "imageList.h"
 #include "SDL.h"
+#include <filesystem>
+namespace fs = std::filesystem;
 
 ImageList::ImageList(const SDL_PixelFormat* fmt)
 {
@@ -10,7 +12,19 @@ ImageList::~ImageList()
 {
 }
 
-void ImageList::addImage(const char* imagePath)
+void ImageList::addImage(const char* path)
+{
+	// SDL uses UTF8 encoding for the path
+	fs::path p = fs::u8path(path);
+	if (fs::is_directory(p)) {
+		for (const auto& entry : fs::directory_iterator(p))
+			addSingleImage(entry.path().u8string().c_str());
+	} else {
+		addSingleImage(path);
+	}
+}
+
+void ImageList::addSingleImage(const char* imagePath)
 {
 	if (mList.empty())
 	{
