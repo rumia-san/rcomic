@@ -27,7 +27,16 @@ public:
 				case SDL_DROPFILE: {
 					char* droppedFile = event.drop.file;
 					mImage.addImage(droppedFile);
+					mImage.convertFormat(mWindow.getWindowPixelFormat());
 					SDL_free(droppedFile);
+					break;
+				}
+				case SDL_WINDOWEVENT: {
+					if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
+						// The window is resized and previous window surface is invalid
+						// So we need to convert again for new window surface...
+						mImage.convertFormat(mWindow.getWindowPixelFormat());
+					}
 					break;
 				}
 				case SDL_MOUSEWHEEL:
@@ -60,7 +69,7 @@ public:
 
 private:
 	Window mWindow;
-	ImageList mImage { mWindow.getWindowPixelFormat() };
+	ImageList mImage;
 	bool mQuit = false;
 	bool mAutoScroll = false;
 	int speed = 1;

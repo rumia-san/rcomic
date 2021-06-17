@@ -9,9 +9,9 @@ struct SDL_PixelFormat;
 class Image
 {
 public:
-	explicit Image(const char *imagePath, const SDL_PixelFormat* fmt = nullptr);
+	explicit Image(const char *imagePath);
 	~Image();
-	void blitTo(SDL_Surface* surface) const;
+	void blitTo(SDL_Surface* surface);
 	void convertFormat(const SDL_PixelFormat* fmt);
 	void moveTo(int x, int y);
 	void moveX(int distance);

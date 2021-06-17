@@ -7,14 +7,12 @@
 #include <tuple>
 using namespace std::string_literals;
 
-Image::Image(const char* imagePath, const SDL_PixelFormat* fmt)
+Image::Image(const char* imagePath)
 {
 	mPosition = std::make_unique<SDL_Rect>();
 	mImageSurface = IMG_Load(imagePath);
 	if (!mImageSurface)
 		throw std::runtime_error("Failed to load image: "s + SDL_GetError());
-	if (fmt)
-		convertFormat(fmt);
 }
 
 Image::~Image()
@@ -22,7 +20,7 @@ Image::~Image()
 	SDL_FreeSurface(mImageSurface);
 }
 
-void Image::blitTo(SDL_Surface* surface) const
+void Image::blitTo(SDL_Surface* surface)
 {
 	// SDL_BlitSurface will modify the last parameter, so we need a copy...
 	SDL_Rect temp = *mPosition;

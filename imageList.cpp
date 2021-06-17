@@ -3,14 +3,6 @@
 #include <filesystem>
 namespace fs = std::filesystem;
 
-ImageList::ImageList(const SDL_PixelFormat* fmt)
-{
-	pixelFormat = fmt;
-}
-
-ImageList::~ImageList()
-{
-}
 
 void ImageList::addImage(const char* path)
 {
@@ -28,7 +20,7 @@ void ImageList::addSingleImage(const char* imagePath)
 {
 	if (mList.empty())
 	{
-		mList.emplace_back(imagePath, pixelFormat);
+		mList.emplace_back(imagePath);
 	}
 	else
 	{
@@ -41,9 +33,17 @@ void ImageList::addSingleImage(const char* imagePath)
 	}
 }
 
+void ImageList::convertFormat(const SDL_PixelFormat* fmt)
+{
+	for (auto&& image : mList)
+	{
+		image.convertFormat(fmt);
+	}
+}
+
 void ImageList::blitTo(SDL_Surface* surface)
 {
-	for (const auto& image : mList)
+	for (auto&& image : mList)
 	{
 		image.blitTo(surface);
 	}
