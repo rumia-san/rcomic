@@ -11,6 +11,7 @@ public:
 	Window();
 	~Window();
 	void update();
+	void clear();
 	void drawImage(Image& image);
 	void drawImage(ImageList& imageList);
 	const SDL_PixelFormat* getWindowPixelFormat();

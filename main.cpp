@@ -43,6 +43,7 @@ public:
 			}
 			handleKeyboardInput();
 			autoScroll();
+			mWindow.clear();
 			mWindow.drawImage(mImage);
 			mWindow.update();
 			/* Set the frame rate to 30 fps to avoid screen tearing...

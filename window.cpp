@@ -6,7 +6,7 @@
 #include <string>
 Window::Window()
 {
-	mWindow = SDL_CreateWindow("SDL2 Displaying Image",
+	mWindow = SDL_CreateWindow("RComic",
 		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 640, 480,
 		SDL_WINDOW_RESIZABLE);
 	if (!mWindow) {
@@ -23,6 +23,12 @@ Window::~Window()
 void Window::update()
 {
 	SDL_UpdateWindowSurface(mWindow);
+}
+
+void Window::clear()
+{
+	SDL_Surface* windowSurface = SDL_GetWindowSurface(mWindow);
+	SDL_FillRect(windowSurface, NULL, SDL_MapRGB(windowSurface->format, 0, 0, 0));
 }
 
 void Window::drawImage(Image& image)
