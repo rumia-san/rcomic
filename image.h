@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 #include <tuple>
+#include <string>
 
 struct SDL_Surface;
 struct SDL_Rect;
@@ -19,6 +20,9 @@ public:
 	std::tuple<int, int> getPosition();
 	std::tuple<int, int> getSize();
 private:
-	SDL_Surface* mImageSurface;
+	std::string mImagePath;
+	SDL_Surface* mImageSurface = nullptr;
 	std::unique_ptr<SDL_Rect> mPosition;
+	bool load();
+	bool unload();
 };

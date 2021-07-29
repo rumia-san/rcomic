@@ -33,14 +33,6 @@ void ImageList::addSingleImage(const char* imagePath)
 	}
 }
 
-void ImageList::convertFormat(const SDL_PixelFormat* fmt)
-{
-	for (auto&& image : mList)
-	{
-		image.convertFormat(fmt);
-	}
-}
-
 void ImageList::blitTo(SDL_Surface* surface)
 {
 	for (auto&& image : mList)
