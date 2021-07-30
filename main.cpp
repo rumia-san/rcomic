@@ -101,6 +101,7 @@ private:
 	}
 };
 
+//Thanks to SDL2, we could create WIN32 GUI program without the WinMain entry function
 int main(int argc, char* argv[])
 {
 	try

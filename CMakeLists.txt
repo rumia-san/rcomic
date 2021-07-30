@@ -10,6 +10,20 @@ include_directories(${SDL2_INCLUDE_DIRS})
 find_package(SDL2_image REQUIRED)
 include_directories(${SDL2_IMAGE_INCLUDE_DIRS})
 
-add_executable (rcomic "main.cpp" "window.h" "image.h" "image.cpp" "window.cpp" "imageList.h" "imageList.cpp")
+set(SOURCE_FILES
+	"main.cpp"
+	"window.h"
+	"image.h"
+	"image.cpp"
+	"window.cpp"
+	"imageList.h"
+	"imageList.cpp"
+)
+
+if(WIN32)
+	add_executable (rcomic WIN32 ${SOURCE_FILES})
+else()
+	add_executable (rcomic ${SOURCE_FILES})
+endif()
 target_compile_features(rcomic PUBLIC cxx_std_17)
 target_link_libraries(rcomic ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES})

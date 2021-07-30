@@ -21,7 +21,7 @@ Use arrow key for moving, click to scroll automatically.
 - [ ] Clear loaded images
 - [ ] Hardware rendering
 - [ ] Image scaling
-- [ ] Start without cmd window on Windows
+- [x] Start without cmd window on Windows
 - [ ] Test and run on Linux
 
 # Screenshot
