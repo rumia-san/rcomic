@@ -4,28 +4,28 @@
 namespace fs = std::filesystem;
 
 
-void ImageList::addImage(const char* path)
+void ImageList::addImage(const char* path, SDL_Renderer* renderer)
 {
 	// SDL uses UTF8 encoding for the path
 	fs::path p = fs::u8path(path);
 	if (fs::is_directory(p)) {
 		for (const auto& entry : fs::directory_iterator(p))
-			addSingleImage(entry.path().u8string().c_str());
+			addSingleImage(entry.path().u8string().c_str(), renderer);
 	} else {
-		addSingleImage(path);
+		addSingleImage(path, renderer);
 	}
 }
 
-void ImageList::addSingleImage(const char* imagePath)
+void ImageList::addSingleImage(const char* imagePath, SDL_Renderer* renderer)
 {
 	if (mList.empty())
 	{
-		mList.emplace_back(imagePath);
+		mList.emplace_back(imagePath, renderer);
 	}
 	else
 	{
 		auto [lastX, lastY] = mList.back().getPosition();
-		mList.emplace_back(imagePath);
+		mList.emplace_back(imagePath, renderer);
 		Image& newImage = mList.back();
 		auto [thisW, thisH] = newImage.getSize();
 		// move to the left side of last image

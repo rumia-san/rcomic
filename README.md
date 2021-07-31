@@ -19,8 +19,10 @@ Use arrow key for moving, click to scroll automatically.
 - [x] Move with arrow key
 - [ ] Adjust moving speed
 - [ ] Clear loaded images
-- [ ] Hardware rendering
+- [x] Hardware rendering
+- [ ] Async image loading 
 - [ ] Image scaling
+- [ ] Adjust image position
 - [x] Start without cmd window on Windows
 - [ ] Test and run on Linux
 

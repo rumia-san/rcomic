@@ -7,31 +7,36 @@
 #include <tuple>
 using namespace std::string_literals;
 
-Image::Image(const char* imagePath)
+Image::Image(const char *imagePath, SDL_Renderer* renderer)
 {
+	mRenderer = renderer;
 	mImagePath = imagePath;
 	mPosition = std::make_unique<SDL_Rect>();
 	load();
-	mPosition->w = mImageSurface->w;
-	mPosition->h = mImageSurface->h;
 	unload(); // Dirty workaround, just for getting the width and height...
 }
 
 bool Image::load()
 {
-	if (mImageSurface)
+	if (mImageTexture)
 		return false;
-	mImageSurface = IMG_Load(mImagePath.c_str());
-	if (!mImageSurface)
+	SDL_Surface *tempSurface = IMG_Load(mImagePath.c_str());
+	if (!tempSurface)
+		throw std::runtime_error("Failed to load image: "s + SDL_GetError());
+	mPosition->w = tempSurface->w;
+	mPosition->h = tempSurface->h;
+	mImageTexture = SDL_CreateTextureFromSurface(mRenderer, tempSurface);
+	SDL_FreeSurface(tempSurface);
+	if (!mImageTexture)
 		throw std::runtime_error("Failed to load image: "s + SDL_GetError());
 	return true;
 }
 
 bool Image::unload()
 {
-	if (mImageSurface) {
-		SDL_FreeSurface(mImageSurface);
-		mImageSurface = nullptr;
+	if (mImageTexture) {
+		SDL_DestroyTexture(mImageTexture);
+		mImageTexture = nullptr;
 		return true;
 	}
 	return false;
@@ -53,25 +58,21 @@ bool rectInScreen(const SDL_Rect* rect, int screenWidth, int screenHeight)
 void Image::blitTo(SDL_Surface* surface)
 {
 	if (rectInScreen(mPosition.get(), surface->w, surface->h)) {
-		if (load())
-			convertFormat(surface->format);
+		load();
 	} else {
 		unload();
 		return;
 	}
-	// SDL_BlitSurface will modify the last parameter, so we need a copy...
-	SDL_Rect temp = *mPosition;
-	if (SDL_BlitSurface(mImageSurface, nullptr, surface, &temp) != 0)
-		throw std::runtime_error("Failed to blit image: "s + SDL_GetError());
+	if (mImageTexture) {
+		SDL_RenderCopy(mRenderer, mImageTexture, nullptr, mPosition.get());
+	}
 }
 
-void Image::convertFormat(const SDL_PixelFormat* fmt)
+void Image::draw()
 {
-	SDL_Surface* converted = SDL_ConvertSurface(mImageSurface, fmt, 0);
-	if (!converted)
-		throw std::runtime_error("Failed to convert image: "s + SDL_GetError());
-	SDL_FreeSurface(mImageSurface);
-	mImageSurface = converted;
+	if (mImageTexture) {
+		SDL_RenderCopy(mRenderer, mImageTexture, nullptr, mPosition.get());
+	}
 }
 
 void Image::moveTo(int x, int y)

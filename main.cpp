@@ -26,7 +26,7 @@ public:
 				{
 				case SDL_DROPFILE: {
 					char* droppedFile = event.drop.file;
-					mImage.addImage(droppedFile);
+					mImage.addImage(droppedFile, mWindow.getRenderer());
 					SDL_free(droppedFile);
 					break;
 				}
@@ -46,10 +46,7 @@ public:
 			mWindow.clear();
 			mWindow.drawImage(mImage);
 			mWindow.update();
-			/* Set the frame rate to 30 fps to avoid screen tearing...
-			*  Currently we use this poor man's workaround :(
-			*/
-			SDL_Delay(1000/30);
+			SDL_Delay(1000/60);
 		}
 	}
 	void run()

@@ -4,31 +4,36 @@
 #include "imageList.h"
 #include <stdexcept>
 #include <string>
+
+using namespace std::string_literals;
 Window::Window()
 {
 	mWindow = SDL_CreateWindow("RComic",
 		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 640, 480,
 		SDL_WINDOW_RESIZABLE);
 	if (!mWindow) {
-		using namespace std::string_literals;
 		throw std::runtime_error("Failed to create window"s + SDL_GetError());
+	}
+	mRenderer = SDL_CreateRenderer(mWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+	if (!mRenderer) {
+		throw std::runtime_error("Failed to create window renderer"s + SDL_GetError());
 	}
 }
 
 Window::~Window()
 {
+	SDL_DestroyRenderer(mRenderer);
 	SDL_DestroyWindow(mWindow);
 }
 
 void Window::update()
 {
-	SDL_UpdateWindowSurface(mWindow);
+	SDL_RenderPresent(mRenderer);
 }
 
 void Window::clear()
 {
-	SDL_Surface* windowSurface = SDL_GetWindowSurface(mWindow);
-	SDL_FillRect(windowSurface, NULL, SDL_MapRGB(windowSurface->format, 0, 0, 0));
+	SDL_RenderClear(mRenderer);
 }
 
 void Window::drawImage(Image& image)
@@ -44,4 +49,9 @@ void Window::drawImage(ImageList& imageList)
 const SDL_PixelFormat* Window::getWindowPixelFormat()
 {
 	return SDL_GetWindowSurface(mWindow)->format;
+}
+
+SDL_Renderer* Window::getRenderer()
+{
+	return mRenderer;
 }
