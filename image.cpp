@@ -12,8 +12,14 @@ Image::Image(const char *imagePath, SDL_Renderer* renderer)
 	mRenderer = renderer;
 	mImagePath = imagePath;
 	mPosition = std::make_unique<SDL_Rect>();
-	load();
-	unload(); // Dirty workaround, just for getting the width and height...
+
+	// Dirty workaround, just for getting the width and height...
+	SDL_Surface *tempSurface = IMG_Load(mImagePath.c_str());
+	if (!tempSurface)
+		throw std::runtime_error("Failed to load image: "s + SDL_GetError());
+	mPosition->w = tempSurface->w;
+	mPosition->h = tempSurface->h;
+	SDL_FreeSurface(tempSurface);
 }
 
 bool Image::load()
