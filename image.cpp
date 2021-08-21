@@ -5,6 +5,8 @@
 #include <stdexcept>
 #include <string>
 #include <tuple>
+#include "imageUtils.h"
+
 using namespace std::string_literals;
 
 Image::Image(const char *imagePath, SDL_Renderer* renderer)
@@ -13,13 +15,9 @@ Image::Image(const char *imagePath, SDL_Renderer* renderer)
 	mImagePath = imagePath;
 	mPosition = std::make_unique<SDL_Rect>();
 
-	// Dirty workaround, just for getting the width and height...
-	SDL_Surface *tempSurface = IMG_Load(mImagePath.c_str());
-	if (!tempSurface)
-		throw std::runtime_error("Failed to load image: "s + SDL_GetError());
-	mPosition->w = tempSurface->w;
-	mPosition->h = tempSurface->h;
-	SDL_FreeSurface(tempSurface);
+	auto [w, h] = ImageUtils::getImageSize(imagePath);
+	mPosition->w = w;
+	mPosition->h = h;
 }
 
 bool Image::load()

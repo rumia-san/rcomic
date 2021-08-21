@@ -18,6 +18,8 @@ set(SOURCE_FILES
 	"window.cpp"
 	"imageList.h"
 	"imageList.cpp"
+	"imageUtils.h"
+	"imageUtils.cpp"
 )
 
 if(WIN32)
