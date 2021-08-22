@@ -10,13 +10,13 @@
 
 uint16_t ntohl16(uint16_t num)
 {
-	uint8_t *ptr = reinterpret_cast<uint8_t*>(&num);
-	return ((uint16_t)ptr[0] << 8) | ptr[1];
+	const uint8_t *data = reinterpret_cast<uint8_t*>(&num);
+	return ((uint16_t)data[0] << 8) | data[1];
 }
 
 uint32_t ntohl32(uint32_t num)
 {
-	uint8_t *data = reinterpret_cast<uint8_t*>(&num);
+	const uint8_t *data = reinterpret_cast<uint8_t*>(&num);
     return ((uint32_t) data[3] << 0)
          | ((uint32_t) data[2] << 8)
          | ((uint32_t) data[1] << 16)
@@ -30,8 +30,8 @@ std::tuple<int, int> ImageUtils::getPNGSize(const char* u8StringPath)
 	std::ifstream imageFileStream{ fs::u8path(u8StringPath), std::ios::binary };
 	std::uint32_t width, height;
 	imageFileStream.seekg(16);
-	imageFileStream.read((char *)&width, 4);
-    imageFileStream.read((char *)&height, 4);
+	imageFileStream.read((char *)&width, sizeof(width));
+    imageFileStream.read((char *)&height, sizeof(height));
 
     width = ntohl32(width);
     height = ntohl32(height);
@@ -47,6 +47,8 @@ std::tuple<int, int> ImageUtils::getJPEGSize(const char* u8StringPath)
 	imageFileStream.seekg(2);
 	while (imageFileStream)
 	{
+	if (width > MAX_SIZE || height > MAX_SIZE)
+		throw std::runtime_error("The size of the image is too large.");
 		uint8_t mark;
 		uint8_t type;
 		uint16_t length;
@@ -72,12 +74,25 @@ std::tuple<int, int> ImageUtils::getJPEGSize(const char* u8StringPath)
 	return { width, height };
 }
 
+std::tuple<int, int> ImageUtils::getGIFSize(const char* u8StringPath)
+{
+	std::ifstream imageFileStream{ fs::u8path(u8StringPath), std::ios::binary };
+	std::uint16_t width, height;
+	imageFileStream.seekg(6);
+	imageFileStream.read((char *)&width, sizeof(width));
+    imageFileStream.read((char *)&height, sizeof(height));
+
+	return { width, height };
+}
+
 std::tuple<int, int> ImageUtils::getImageSize(const char* u8StringPath)
 {
 	if (ImageUtils::isPNGFile(u8StringPath))
 		return ImageUtils::getPNGSize(u8StringPath);
 	else if (ImageUtils::isJPGFile(u8StringPath))
 		return ImageUtils::getJPEGSize(u8StringPath);
+	else if (ImageUtils::isGIFFile(u8StringPath))
+		return ImageUtils::getGIFSize(u8StringPath);
 	throw std::runtime_error("Unsupported format");
 }
 
@@ -86,7 +101,6 @@ bool ImageUtils::isPNGFile(const char* u8StringPath)
 	std::ifstream imageFileStream{ fs::u8path(u8StringPath), std::ios::binary };
 	const std::array<uint8_t, 8> PNGSign{ 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
 	std::array<uint8_t, 8> buffer;
-	static_assert(sizeof(uint8_t) == sizeof(char));
 	imageFileStream.read(reinterpret_cast<char *>(buffer.data()), buffer.size());
 	return std::equal(PNGSign.begin(), PNGSign.end(), buffer.begin());
 }
@@ -97,7 +111,6 @@ bool ImageUtils::isJPGFile(const char* u8StringPath)
 	const std::array<uint8_t, 2> JPGSign1{ 0xFF, 0xD8 };
 	const std::array<uint8_t, 2> JPGSign2{ 0xFF, 0xD9 };
 	std::array<uint8_t, 2> buffer;
-	static_assert(sizeof(uint8_t) == sizeof(char));
 	imageFileStream.read(reinterpret_cast<char *>(buffer.data()), buffer.size());
 	if (!std::equal(JPGSign1.begin(), JPGSign1.end(), buffer.begin()))
 		return false;
@@ -109,3 +122,15 @@ bool ImageUtils::isJPGFile(const char* u8StringPath)
 		return false;
 	return true;
 }
+
+bool ImageUtils::isGIFFile(const char* u8StringPath)
+{
+	std::ifstream imageFileStream{ fs::u8path(u8StringPath), std::ios::binary };
+	const std::array<uint8_t, 6> GIFSign1{ 'G', 'I', 'F', '8', '7', 'a' };
+	const std::array<uint8_t, 6> GIFSign2{ 'G', 'I', 'F', '8', '9', 'a' };
+	std::array<uint8_t, 6> buffer;
+	imageFileStream.read(reinterpret_cast<char *>(buffer.data()), buffer.size());
+	return std::equal(GIFSign1.begin(), GIFSign1.end(), buffer.begin()) ||
+			std::equal(GIFSign2.begin(), GIFSign2.end(), buffer.begin());
+}
+
